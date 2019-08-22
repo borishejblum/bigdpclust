@@ -1,0 +1,29 @@
+# R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
+
+language: R
+cache: packages
+warnings_are_errors: true
+sudo: false
+
+matrix:
+  include:
+    - os: linux
+      r: release
+
+    - os: linux
+      r: devel
+
+  allow_failures:
+    - os: osx
+      r: release
+
+    - os: osx
+      r: devel
+
+r_packages:
+- NPflow
+
+after_success:
+  - Rscript -e 'covr::codecov(type ="all")'
+
+r_check_args: "--as-cran --timings"

@@ -13,8 +13,8 @@ Status](https://ci.appveyor.com/api/projects/status/github/borishejblum/bigdpclu
 [![Downloads](https://cranlogs.r-pkg.org/badges/bigdpclust?color=blue)](https://www.r-pkg.org/pkg/bigdpclust)
 <!-- badges: end -->
 
-`bigdpclust` performs clustering of tall data with Gaussian Dirichlet
-process mixture model.
+`bigdpclust` performs clustering of tall data using a Bayesian
+nonparametric Gaussian Dirichlet process mixture model.
 
 ## Installation
 
