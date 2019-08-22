@@ -1,0 +1,15 @@
+Package: bigdpclust
+Type: Package
+Title: Clustering of tall data with Gaussian Dirichlet process mixture model
+Version: 0.1.0
+Author: person(c("Boris", "P"), "Hejblum", role = c("aut", "cre"),
+		     email = "boris.hejblum@u-bordeaux.fr"),
+	person(c("Paul", "DW"), "Kirk", role = c("aut")) 
+Description: More about what it does (maybe more than one line)
+    Use four spaces when indenting paragraphs within the Description.
+Imports: 
+    NPflow
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.1.1

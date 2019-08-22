@@ -1,0 +1,35 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+# `bigdpclust`
+
+<!-- badges: start -->
+[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/bigdpclust)](https://cran.r-project.org/package=bigdpclust)
+[![Travis-CI Build Status](https://travis-ci.org/borishejblum/bigdpclust.svg?branch=master)](https://travis-ci.org/borishejblum/bigdpclust)
+[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/borishejblum/bigdpclust?branch=master&svg=true)](https://ci.appveyor.com/project/borishejblum/bigdpclust)
+[![Downloads](https://cranlogs.r-pkg.org/badges/bigdpclust?color=blue)](https://www.r-pkg.org/pkg/bigdpclust)
+<!-- badges: end -->
+
+`bigdpclust` performs clustering of tall data with Gaussian Dirichlet process mixture model.
+
+## Installation
+
+You can install the development version of `bigdpclust` from [GitHub](https://github.com/bigdpclust) with:
+
+```{r GitHub-install, eval=FALSE}
+#install.packages("devtools")
+devtools::install_github("borishejblum/bigdpclust")
+```
+
+-- Boris Hejblum & Paul Kirk
