@@ -7,6 +7,8 @@
 #' @importFrom NPflow DPMGibbsN
 #' @importFrom stats kmeans
 #'
+#' @export
+#'
 #' @examples
 #' mydata <- rbind(cbind(rnorm(1000), rnorm(n = 1000)),
 #'                 cbind(rnorm(500, m=10), rnorm(n = 500, m=10)))
@@ -55,7 +57,7 @@ bigdpclust <- function(data, coresets = NULL, clumping_fn = stats::kmeans,
             stop("both 'coresets' and 'clumping_fn' arguments are both NULL")
         }
         else{
-            coresets <- clumping_fn(coresets, nclumps)[c("centers", "size")]
+            coresets <- clumping_fn(data, nclumps)[c("centers", "size")]
         }
     }
 
