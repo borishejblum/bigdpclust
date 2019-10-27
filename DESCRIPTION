@@ -7,6 +7,8 @@ Author: person(c("Boris", "P"), "Hejblum", role = c("aut", "cre"),
 	person(c("Paul", "DW"), "Kirk", role = c("aut")) 
 Description: More about what it does (maybe more than one line)
     Use four spaces when indenting paragraphs within the Description.
+Depends: 
+    stats
 Imports: 
     NPflow
 License: GPL-3

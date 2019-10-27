@@ -4,10 +4,26 @@
 \alias{bigdpclust}
 \title{Gaussian Dirichlet Process Mixture CLustering For Tall Data}
 \usage{
-bigdpclust()
+bigdpclust(data, coresets = NULL, clumping_fn = stats::kmeans,
+  nclumps = min(1000, nrow(data)/10), hyperG0 = NULL, Ninit = 50,
+  Nmcmc = 1000, burnin = Nmcmc/5, thin = 2, loss_fn = "MBinderN")
+}
+\arguments{
+\item{data}{n by p matrix wuith n observations in rows and p dimensions in columns.}
+
+\item{coresets}{a list with 3 components}
 }
 \description{
 Gaussian Dirichlet Process Mixture CLustering For Tall Data
+}
+\examples{
+mydata <- rbind(cbind(rnorm(1000), rnorm(n = 1000)),
+                cbind(rnorm(500, m=10), rnorm(n = 500, m=10)))
+coresets <- kmeans(mydata, 100)[c("cluster", "centers", "size")]
+
+res <- bigdpclust(mydata)
+table(res$cluster[1:1000])
+table(res$cluster[1001:1500])
 }
 \author{
 Boris Hejblum, Paul Kirk
