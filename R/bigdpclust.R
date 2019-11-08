@@ -1,7 +1,18 @@
 #' Gaussian Dirichlet Process Mixture CLustering For Tall Data
 #'
 #' @param data n by p matrix wuith n observations in rows and p dimensions in columns.
+#'
 #' @param coresets a list with 3 components
+#'
+#' @param variance logical flag indicating whether the covariance matrix of each cluster is
+#' constrained as diagonal, or unconstrained full matrix.
+#' Default is \code{FALSE} (unconstrained covariance).
+#'
+#' @param burnin an integer giving the number of MCMC iterations to burn. Ddefaults is half)
+#'
+#' @param plotevery_nit an integer indicating the interval between plotted iterations
+#' when \code{doPlot} is \code{TRUE}. Default is \code{Nmcmc/10}
+#'
 #'
 #' @author Boris Hejblum, Paul Kirk
 #' @importFrom NPflow DPMGibbsN
@@ -10,19 +21,24 @@
 #' @export
 #'
 #' @examples
-#' mydata <- rbind(cbind(rnorm(1000), rnorm(n = 1000)),
-#'                 cbind(rnorm(500, m=10), rnorm(n = 500, m=10)))
-#' coresets <- kmeans(mydata, 100)[c("cluster", "centers", "size")]
+#' n1 <- 50000
+#' n2 <- 500
+#' mydata <- rbind(cbind(rnorm(n1), rnorm(n = n1)),
+#'                 cbind(rnorm(n2, m=10), rnorm(n = n2, m=10)))
+#' #plot(mydata)
+#' #coresets <- stats::kmeans(mydata, centers = 100)[c("cluster", "centers", "size")]
 #'
-#' res <- bigdpclust(mydata)
-#' table(res$cluster[1:1000])
-#' table(res$cluster[1001:1500])
+#' res <- bigdpclust(mydata, nclumps=200)
+#' table(res$cluster[1:n1])
+#' table(res$cluster[n1 + 1:n2])
 
 bigdpclust <- function(data, coresets = NULL, clumping_fn = stats::kmeans,
-                       nclumps = min(1000, nrow(data)/10),
+                       nclumps = min(500, nrow(data)/10),
                        hyperG0 = NULL,
                        Ninit = 50, Nmcmc = 1000,
-                       burnin = Nmcmc/5, thin = 2, loss_fn = "MBinderN"){
+                       burnin = Nmcmc/5, thin = 2, loss_fn = "MBinderN",
+                       diagVar = FALSE,
+                       plotevery_nit = Nmcmc/10){
 
 
     if(!is.null(coresets)){
@@ -57,16 +73,16 @@ bigdpclust <- function(data, coresets = NULL, clumping_fn = stats::kmeans,
             stop("both 'coresets' and 'clumping_fn' arguments are both NULL")
         }
         else{
-            coresets <- clumping_fn(data, nclumps)[c("centers", "size")]
+            coresets <- suppressWarnings(clumping_fn(data, nclumps)[c("cluster", "centers", "size")])
         }
     }
 
     if(is.null(hyperG0)){
-        # default hyperpriors
+        # setting default hyperpriors
         hyperG0 <- list()
-        hyperG0[["mu"]] <- colMeans(coresets$centers)
-        hyperG0[["kappa"]] <- 0.001
-        hyperG0[["nu"]] <- d + 2
+        hyperG0[["mu"]] <- colMeans(coresets$centers) # Empirical Bayes
+        hyperG0[["kappa"]] <- 0.001 # Weakly informative
+        hyperG0[["nu"]] <- d + 2 # Weakly informative
         hyperG0[["lambda"]] <- diag(d)/10
     }
 
@@ -74,7 +90,7 @@ bigdpclust <- function(data, coresets = NULL, clumping_fn = stats::kmeans,
 
     res_mcmc <- NPflow::DPMGibbsN(z = t(coresets$centers), obs_weights = coresets$size,
                              hyperG0 = hyperG0, nbclust_init = Ninit, N = Nmcmc,
-                             doPlot = TRUE)
+                             doPlot = TRUE, diagVar = FALSE, plotevery = plotevery_nit)
     s <- summary(res_mcmc, burnin = burnin, thin = thin, lossFn = loss_fn)
     coresets_clust <- s$point_estim$c_est
     names(coresets_clust) <- rownames(coresets$centers)
