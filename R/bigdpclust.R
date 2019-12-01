@@ -4,7 +4,7 @@
 #'
 #' @param coresets a list with 3 components
 #'
-#' @param variance logical flag indicating whether the covariance matrix of each cluster is
+#' @param diagVar logical flag indicating whether the covariance matrix of each cluster is
 #' constrained as diagonal, or unconstrained full matrix.
 #' Default is \code{FALSE} (unconstrained covariance).
 #'

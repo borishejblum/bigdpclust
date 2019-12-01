@@ -28,6 +28,10 @@ bigdpclust(
 
 \item{burnin}{an integer giving the number of MCMC iterations to burn. Ddefaults is half)}
 
+\item{diagVar}{logical flag indicating whether the covariance matrix of each cluster is
+constrained as diagonal, or unconstrained full matrix.
+Default is \code{FALSE} (unconstrained covariance).}
+
 \item{plotevery_nit}{an integer indicating the interval between plotted iterations
 when \code{doPlot} is \code{TRUE}. Default is \code{Nmcmc/10}}
 
@@ -36,10 +40,6 @@ Default is \code{FALSE}.}
 
 \item{verbose}{logical flag indicating whether partition info is messaged over
 at each MCMC iteration. Default is \code{FALSE}.}
-
-\item{variance}{logical flag indicating whether the covariance matrix of each cluster is
-constrained as diagonal, or unconstrained full matrix.
-Default is \code{FALSE} (unconstrained covariance).}
 }
 \description{
 Gaussian Dirichlet Process Mixture CLustering For Tall Data
