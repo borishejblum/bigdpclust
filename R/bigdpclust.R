@@ -13,6 +13,11 @@
 #' @param plotevery_nit an integer indicating the interval between plotted iterations
 #' when \code{doPlot} is \code{TRUE}. Default is \code{Nmcmc/10}
 #'
+#'@param doPlot logical flag indicating whether to plot MCMC iteration or not.
+#'Default is \code{FALSE}.
+#'
+#'@param verbose logical flag indicating whether partition info is messaged over
+#'at each MCMC iteration. Default is \code{FALSE}.
 #'
 #' @author Boris Hejblum, Paul Kirk
 #' @importFrom NPflow DPMGibbsN
@@ -38,7 +43,9 @@ bigdpclust <- function(data, coresets = NULL, clumping_fn = stats::kmeans,
                        Ninit = 50, Nmcmc = 1000,
                        burnin = Nmcmc/5, thin = 2, loss_fn = "MBinderN",
                        diagVar = FALSE,
-                       plotevery_nit = Nmcmc/10){
+                       plotevery_nit = Nmcmc/10,
+                       doPlot = FALSE,
+                       verbose = FALSE){
 
 
     if(!is.null(coresets)){
@@ -90,7 +97,8 @@ bigdpclust <- function(data, coresets = NULL, clumping_fn = stats::kmeans,
 
     res_mcmc <- NPflow::DPMGibbsN(z = t(coresets$centers), obs_weights = coresets$size,
                              hyperG0 = hyperG0, nbclust_init = Ninit, N = Nmcmc,
-                             doPlot = TRUE, diagVar = FALSE, plotevery = plotevery_nit)
+                             doPlot = doPlot, diagVar = FALSE, plotevery = plotevery_nit,
+                             verbose = verbose)
     s <- summary(res_mcmc, burnin = burnin, thin = thin, lossFn = loss_fn)
     coresets_clust <- s$point_estim$c_est
     names(coresets_clust) <- rownames(coresets$centers)

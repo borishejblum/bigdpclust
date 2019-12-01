@@ -4,10 +4,22 @@
 \alias{bigdpclust}
 \title{Gaussian Dirichlet Process Mixture CLustering For Tall Data}
 \usage{
-bigdpclust(data, coresets = NULL, clumping_fn = stats::kmeans,
-  nclumps = min(500, nrow(data)/10), hyperG0 = NULL, Ninit = 50,
-  Nmcmc = 1000, burnin = Nmcmc/5, thin = 2, loss_fn = "MBinderN",
-  diagVar = FALSE, plotevery_nit = Nmcmc/10)
+bigdpclust(
+  data,
+  coresets = NULL,
+  clumping_fn = stats::kmeans,
+  nclumps = min(500, nrow(data)/10),
+  hyperG0 = NULL,
+  Ninit = 50,
+  Nmcmc = 1000,
+  burnin = Nmcmc/5,
+  thin = 2,
+  loss_fn = "MBinderN",
+  diagVar = FALSE,
+  plotevery_nit = Nmcmc/10,
+  doPlot = FALSE,
+  verbose = FALSE
+)
 }
 \arguments{
 \item{data}{n by p matrix wuith n observations in rows and p dimensions in columns.}
@@ -18,6 +30,12 @@ bigdpclust(data, coresets = NULL, clumping_fn = stats::kmeans,
 
 \item{plotevery_nit}{an integer indicating the interval between plotted iterations
 when \code{doPlot} is \code{TRUE}. Default is \code{Nmcmc/10}}
+
+\item{doPlot}{logical flag indicating whether to plot MCMC iteration or not.
+Default is \code{FALSE}.}
+
+\item{verbose}{logical flag indicating whether partition info is messaged over
+at each MCMC iteration. Default is \code{FALSE}.}
 
 \item{variance}{logical flag indicating whether the covariance matrix of each cluster is
 constrained as diagonal, or unconstrained full matrix.
