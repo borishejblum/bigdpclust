@@ -2,7 +2,7 @@
 #'
 #' @param data n by p matrix wuith n observations in rows and p dimensions in columns.
 #'
-#' @param coresets a list with 3 components
+#' @param coresets a list with 4 components: \code{cluster}, \code{centers} and \code{size}.
 #'
 #' @param diagVar logical flag indicating whether the covariance matrix of each cluster is
 #' constrained as diagonal, or unconstrained full matrix.
@@ -46,21 +46,30 @@ bigdpclust <- function(data, coresets = NULL, clumping_fn = stats::kmeans,
                        plotevery_nit = Nmcmc/10,
                        doPlot = FALSE,
                        verbose = FALSE){
-
-
+    
+    
     if(!is.null(coresets)){
         stopifnot(is.list(coresets))
+        if(is.null(coresets$cluster)){
+            stop("Missing the 'cluster' attributes from the 'coresets' argument")
+        }
+        if(is.null(coresets$centers)){
+            stop("Missing the 'centers' attributes from the 'coresets' argument")
+        }
+        if(is.null(coresets$size)){
+            stop("Missing the 'size' attributes from the 'coresets' argument")
+        }
         stopifnot(names(coresets) == c("cluster", "centers", "size"))
         stopifnot(is.matrix(coresets$centers))
         stopifnot(is.vector(coresets$size))
         stopifnot(nrow(coresets$centers) == length(coresets$size))
     }
-
+    
     if(!is.null(data)){
         stopifnot(is.matrix(data))
     }
-
-
+    
+    
     if(is.null(data)){
         if(is.null(coresets)){
             stop("either 'coresets' or 'data' must be specified")
@@ -68,22 +77,35 @@ bigdpclust <- function(data, coresets = NULL, clumping_fn = stats::kmeans,
         else{
             d <- ncol(coresets$centers)
         }
-
+        
     }
     else{
         d <- ncol(data)
     }
-
-
+    
+    
     if(is.null(coresets)){
         if(is.null(clumping_fn)){
             stop("both 'coresets' and 'clumping_fn' arguments are both NULL")
         }
         else{
-            coresets <- suppressWarnings(clumping_fn(data, nclumps)[c("cluster", "centers", "size")])
+            coresets <- suppressWarnings(clumping_fn(data, nclumps)[c("cluster", "centers", "size", "withinss")])
         }
     }
+    
+    #computing within variances
+    obs_withinss <- lapply(1:nclumps, function(k){
+        tcrossprod(t(data[coresets$cluster == k, , drop=FALSE]) - 
+                      coresets$centers[k,])
+    })
 
+    #obs_interss <- crossprod(sqrt(coresets$size)*t(t(coresets$centers) - colMeans(data))) #good
+    #Reduce(`+`, obs_withinss) + obs_interss
+    #obs_totss <- tcrossprod(t(data) - colMeans(data))
+    
+    
+    #intra_ss1 <- sum((data[1, ] - coresets$centers[1, ])^2)
+    
     if(is.null(hyperG0)){
         # setting default hyperpriors
         hyperG0 <- list()
@@ -92,17 +114,17 @@ bigdpclust <- function(data, coresets = NULL, clumping_fn = stats::kmeans,
         hyperG0[["nu"]] <- d + 2 # Weakly informative
         hyperG0[["lambda"]] <- diag(d)/10
     }
-
+    
     Ninit <- min(Ninit, nrow(coresets$centers))
-
+    
     res_mcmc <- NPflow::DPMGibbsN(z = t(coresets$centers), obs_weights = coresets$size,
-                             hyperG0 = hyperG0, nbclust_init = Ninit, N = Nmcmc,
-                             doPlot = doPlot, diagVar = FALSE, plotevery = plotevery_nit,
-                             verbose = verbose)
+                                  hyperG0 = hyperG0, nbclust_init = Ninit, N = Nmcmc,
+                                  doPlot = doPlot, diagVar = diagVar, plotevery = plotevery_nit,
+                                  verbose = verbose, obs_withinss = obs_withinss)
     s <- summary(res_mcmc, burnin = burnin, thin = thin, lossFn = loss_fn)
     coresets_clust <- s$point_estim$c_est
     names(coresets_clust) <- rownames(coresets$centers)
-
+    
     output <- list("cluster" = as.numeric(as.factor(as.numeric(coresets_clust[coresets$cluster]))),
                    "mcmc_output" = res_mcmc)
     return(output)
